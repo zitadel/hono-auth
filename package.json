@@ -1,76 +1,95 @@
 {
-  "name": "@hono/auth-js",
-  "version": "1.1.1",
-  "description": "A third-party Auth js middleware for Hono",
-  "main": "dist/index.js",
+  "name": "@zitadel/hono-auth",
+  "version": "0.1.0",
   "type": "module",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./react": {
-      "import": {
-        "types": "./dist/react.d.ts",
-        "default": "./dist/react.js"
-      },
-      "require": {
-        "types": "./dist/react.d.cts",
-        "default": "./dist/react.cjs"
-      }
-    }
+  "description": "A comprehensive Auth.js integration for Hono applications with TypeScript support, middleware-based authentication, and session management",
+  "author": {
+    "name": "Mridang Agarwalla",
+    "email": "mridang@zitadel.com",
+    "url": "https://github.com/zitadel"
   },
-  "typesVersions": {
-    "*": {
-      "react": [
-        "./dist/react.d.mts"
-      ]
-    }
+  "license": "Apache-2.0",
+  "scripts": {
+    "prepack": "tsc",
+    "prepare": "npm run build",
+    "build": "tsc",
+    "test": "jest --verbose --config=jest.config.mjs --runInBand",
+    "test:watch": "npm run test -- --watch",
+    "test:debug": "jest --verbose --config=jest.config.mjs --runInBand --detectOpenHandles",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
+    "depcheck": "npx knip",
+    "docs": "typedoc"
   },
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
-    "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./adapters": {
+      "types": "./dist/adapter.d.ts"
+    }
   },
-  "license": "MIT",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public",
-    "provenance": true
+  "keywords": [
+    "hono",
+    "authjs",
+    "authentication",
+    "authorization",
+    "oauth",
+    "session",
+    "jwt",
+    "typescript",
+    "middleware",
+    "security"
+  ],
+  "devDependencies": {
+    "@commitlint/config-conventional": "^20.5.0",
+    "@jest/globals": "^30.0.5",
+    "@mridang/eslint-defaults": "^1.6.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.0",
+    "@semantic-release/npm": "^13.1.1",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/jest": "30.0.0",
+    "@types/node": "^22.18.13",
+    "eslint": "9.32.0",
+    "jest": "30.0.5",
+    "jest-junit": "^16.0.0",
+    "knip": "^5.83.0",
+    "prettier": "3.6.2",
+    "semantic-release": "^25.0.1",
+    "ts-jest": "29.4.0",
+    "typedoc": "^0.28.7",
+    "typescript": "^5.9.3"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/honojs/middleware.git",
-    "directory": "packages/auth-js"
+    "url": "git+https://github.com/zitadel/hono-auth.git"
   },
-  "homepage": "https://github.com/honojs/middleware",
+  "dependencies": {
+    "@auth/core": ">=0.40.0",
+    "hono": ">=3.0.0"
+  },
   "peerDependencies": {
-    "@auth/core": ">=0.35.0",
-    "hono": ">=3.0.0",
-    "react": "^18 || ^19 || ^19.0.0-rc"
+    "@auth/core": ">=0.40.0",
+    "hono": ">=3.0.0"
   },
-  "devDependencies": {
-    "@auth/core": "^0.35.3",
-    "@types/react": "^19",
-    "hono": "^4.11.5",
-    "react": "^19.2.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1"
-  },
+  "private": false,
   "engines": {
-    "node": ">=18.4.0"
+    "node": ">=22.0.0"
+  },
+  "homepage": "https://github.com/zitadel/hono-auth",
+  "bugs": "https://github.com/zitadel/hono-auth/issues",
+  "publishConfig": {
+    "access": "public"
   }
 }

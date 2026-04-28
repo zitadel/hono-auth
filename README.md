@@ -1,122 +1,146 @@
-# Auth.js middleware for Hono
+# Hono Auth.js
 
-[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=auth-js)](https://codecov.io/github/honojs/middleware)
+A [Hono](https://hono.dev/) integration for [Auth.js](https://authjs.dev/)
+that provides seamless authentication with multiple providers, session
+management, and route protection using Hono middleware patterns.
 
-This is a [Auth.js](https://authjs.dev) third-party middleware for [Hono](https://github.com/honojs/hono).
+This integration brings the power and flexibility of Auth.js to Hono
+applications with full TypeScript support and Web API-native handling.
 
-This middleware can be used to inject the Auth.js session into the request context.
+### Why?
+
+Modern web applications require robust, secure, and flexible authentication
+systems. While Auth.js provides excellent authentication capabilities,
+integrating it with Hono applications requires proper middleware composition
+and environment-aware configuration.
+
+However, a direct integration isn't always straightforward. Different types
+of applications or deployment scenarios might warrant different approaches:
+
+- **Multi-Runtime Support:** Hono runs on Node.js, Deno, Bun, Cloudflare
+  Workers, and more. A proper integration should handle environment
+  differences transparently while maintaining consistent Auth.js behavior.
+- **Middleware Composition:** Hono's middleware pattern requires proper
+  context variable management and error handling. This integration provides
+  middleware for configuration, authentication handling, and route protection
+  that compose naturally with Hono's middleware pipeline.
+- **Proxy-Aware URL Handling:** When deployed behind reverse proxies or
+  edge networks, proper URL resolution from X-Forwarded headers is critical
+  for Auth.js callback URLs and redirect handling.
+
+This integration, `@zitadel/hono-auth`, aims to provide the flexibility to
+handle such scenarios. It allows you to leverage the full Auth.js ecosystem
+while maintaining Hono best practices, ultimately leading to a more
+effective and less burdensome authentication implementation.
 
 ## Installation
 
-```plain
-npm i hono @hono/auth-js @auth/core
+Install using NPM by using the following command:
+
+```sh
+npm install @zitadel/hono-auth @auth/core
 ```
 
-## Configuration
+## Usage
 
-Before starting using the middleware you must set the following environment variables:
+To use this integration, configure Auth.js using `initAuthConfig()` and
+mount the `authHandler()` on the Auth.js base path.
 
-```plain
-AUTH_SECRET=#required
-AUTH_URL=https://example.com/api/auth
-```
+```typescript
+import { Hono } from 'hono';
+import { authHandler, initAuthConfig, verifyAuth } from '@zitadel/hono-auth';
+import Zitadel from '@auth/core/providers/zitadel';
 
-## How to Use
-
-```ts
-import { Hono } from 'hono'
-import { authHandler, initAuthConfig, verifyAuth } from '@hono/auth-js'
-import GitHub from '@auth/core/providers/github'
-
-const app = new Hono()
+const app = new Hono();
 
 app.use(
   '*',
   initAuthConfig((c) => ({
     secret: c.env.AUTH_SECRET,
     providers: [
-      GitHub({
-        clientId: c.env.GITHUB_ID,
-        clientSecret: c.env.GITHUB_SECRET,
+      Zitadel({
+        clientId: c.env.ZITADEL_CLIENT_ID,
+        issuer: c.env.ZITADEL_ISSUER,
       }),
     ],
-  }))
-)
+  })),
+);
 
-app.use('/api/auth/*', authHandler())
+app.use('/api/auth/*', authHandler());
 
-app.use('/api/*', verifyAuth())
+app.use('/api/*', verifyAuth());
 
 app.get('/api/protected', (c) => {
-  const auth = c.get('authUser')
-  return c.json(auth)
-})
+  const auth = c.get('authUser');
+  return c.json(auth);
+});
 
-export default app
+export default app;
 ```
 
-React component
+#### Using the Authentication System
 
-```tsx
-import { SessionProvider, useSession } from '@hono/auth-js/react'
+The integration provides several middleware functions:
 
-export default function App() {
-  return (
-    <SessionProvider>
-      <Children />
-    </SessionProvider>
-  )
-}
+**Middleware:**
 
-function Children() {
-  const { data: session, status } = useSession()
-  return <div>I am {session?.user}</div>
-}
+- `initAuthConfig()`: Initializes Auth.js configuration in the context
+- `authHandler()`: Handles all Auth.js routes (sign-in, sign-out, callbacks)
+- `verifyAuth()`: Requires authentication, returns 401 if not authenticated
+
+**Utility Functions:**
+
+- `getAuthUser()`: Retrieves the authenticated user from context
+- `setEnvDefaults()`: Sets environment defaults on Auth.js config
+
+**Basic Usage:**
+
+```typescript
+import { getAuthUser } from '@zitadel/hono-auth';
+
+// Public route
+app.get('/api/public', (c) => {
+  return c.json({ message: 'Public endpoint' });
+});
+
+// Protected route - manual check
+app.get('/api/profile', async (c) => {
+  const authUser = await getAuthUser(c);
+  if (!authUser) return c.text('Not authenticated', 401);
+  return c.json(authUser.session);
+});
+
+// Protected route - using middleware
+app.use('/api/*', verifyAuth());
+app.get('/api/admin', (c) => {
+  const auth = c.get('authUser');
+  return c.json({ user: auth.session.user });
+});
 ```
 
-Default `/api/auth` path can be changed to something else but that will also require you to change path in react app.
+## Known Issues
 
-```tsx
-import { SessionProvider, authConfigManager, useSession } from '@hono/auth-js/react'
+- **Configuration Order:** `initAuthConfig()` must be applied before
+  `authHandler()` and `verifyAuth()` in the middleware chain.
+- **Environment Variables:** `AUTH_SECRET` must be set either via
+  environment variables or in the config handler. The middleware throws
+  a 500 error if it's missing.
 
-authConfigManager.setConfig({
-  basePath: '/custom', // if auth route is diff from /api/auth
-})
+## Useful links
 
-export default function App() {
-  return (
-    <SessionProvider>
-      <Children />
-    </SessionProvider>
-  )
-}
+- **[Auth.js](https://authjs.dev/):** The authentication library that this
+  integration is built upon.
+- **[Hono](https://hono.dev/):** The lightweight web framework this
+  integration is designed for.
+- **[Auth.js Providers](https://authjs.dev/getting-started/providers):**
+  Complete list of supported authentication providers.
 
-function Children() {
-  const { data: session, status } = useSession()
-  return <div>I am {session?.user}</div>
-}
-```
+## Contributing
 
-SessionProvider is not needed with react query.Use useQuery hook to fetch session data.
+If you have suggestions for how this integration could be improved, or
+want to report a bug, open an issue - we'd love all and any
+contributions.
 
-```ts
-const useSession = () => {
-  const { data, status } = useQuery({
-    queryKey: ['session'],
-    queryFn: async () => {
-      const res = await fetch('/api/auth/session')
-      return res.json()
-    },
-    staleTime: 5 * (60 * 1000),
-    gcTime: 10 * (60 * 1000),
-    refetchOnWindowFocus: true,
-  })
-  return { session: data, status }
-}
-```
+## License
 
-For more details on how to Popup Oauth Login see [example](https://github.com/divyam234/next-auth-hono-react)
-
-## Author
-
-Divyam <https://github.com/divyam234>
+Apache-2.0
