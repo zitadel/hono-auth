@@ -50,8 +50,8 @@
     "security"
   ],
   "devDependencies": {
-    "@commitlint/config-conventional": "^20.5.0",
-    "@jest/globals": "^30.0.5",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@jest/globals": "^30.4.0",
     "@mridang/eslint-defaults": "^1.6.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -60,16 +60,16 @@
     "@semantic-release/release-notes-generator": "^14.1.0",
     "@tsconfig/node22": "^22.0.2",
     "@types/jest": "30.0.0",
-    "@types/node": "^22.18.13",
-    "eslint": "9.32.0",
-    "jest": "30.0.5",
+    "@types/node": "^25.6.2",
+    "eslint": "10.3.0",
+    "jest": "30.4.0",
     "jest-junit": "^17.0.0",
-    "knip": "^5.83.0",
-    "prettier": "3.6.2",
+    "knip": "^6.12.1",
+    "prettier": "3.8.3",
     "semantic-release": "^25.0.1",
-    "ts-jest": "29.4.0",
+    "ts-jest": "29.4.9",
     "typedoc": "^0.28.7",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "repository": {
     "type": "git",
@@ -77,11 +77,11 @@
   },
   "dependencies": {
     "@auth/core": ">=0.40.0",
-    "hono": ">=4.12.16"
+    "hono": ">=4.12.18"
   },
   "peerDependencies": {
     "@auth/core": ">=0.40.0",
-    "hono": ">=4.12.16"
+    "hono": ">=4.12.18"
   },
   "private": false,
   "engines": {
