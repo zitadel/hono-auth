@@ -77,11 +77,11 @@
   },
   "dependencies": {
     "@auth/core": ">=0.40.0",
-    "hono": ">=4.12.18"
+    "hono": ">=4.12.21"
   },
   "peerDependencies": {
     "@auth/core": ">=0.40.0",
-    "hono": ">=4.12.18"
+    "hono": ">=4.12.21"
   },
   "private": false,
   "engines": {
