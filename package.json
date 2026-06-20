@@ -1,6 +1,6 @@
 {
   "name": "@zitadel/hono-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A comprehensive Auth.js integration for Hono applications with TypeScript support, middleware-based authentication, and session management",
   "author": {
